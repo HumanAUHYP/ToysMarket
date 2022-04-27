@@ -25,7 +25,7 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
             <Button x:Name="btnBuy" Content="Buy" FontSize="22" Click="btnBuy_Click" Margin="5"/>
-            <Button x:Name="btnSort" Content="/\" FontSize="24" Click="btnSort_Click" Padding="5,0" Margin="5"/>
+            <Button x:Name="btnSort" Content="Sort" FontSize="22" Click="btnSort_Click" Padding="5,0" Margin="5"/>
         </StackPanel>
 
         <DataGrid x:Name="dgProducts" AutoGenerateColumns="False" ItemsSource="{Binding ProductsForSearch}" Grid.Row="1" IsReadOnly="True">

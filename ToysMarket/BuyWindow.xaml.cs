@@ -46,8 +46,7 @@ namespace ToysMarket
 
         private void btnOk_Click(object sender, RoutedEventArgs e)
         {
-            int count = 0;
-            if (!int.TryParse(tbCount.Text, out count))
+            if (!int.TryParse(tbCount.Text, out int count))
             {
                 MessageBox.Show("Впишите число!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Hand);
                 return;
@@ -93,7 +92,6 @@ namespace ToysMarket
             dbConnection.db.SaveChanges();
 
             this.Close();
-
         }
 
         private void cbBuyer_SelectionChanged(object sender, SelectionChangedEventArgs e)
