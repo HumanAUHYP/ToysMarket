@@ -12,24 +12,18 @@ namespace ToysMarket
     using System;
     using System.Collections.Generic;
     
-    public partial class Product
+    public partial class Producer
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Product()
+        public Producer()
         {
-            this.Order = new HashSet<Order>();
+            this.Product = new HashSet<Product>();
         }
     
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
-        public int ProducerId { get; set; }
-        public Nullable<decimal> Price { get; set; }
-        public Nullable<bool> IsActually { get; set; }
-        public Nullable<int> Count { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Order> Order { get; set; }
-        public virtual Producer Producer { get; set; }
+        public virtual ICollection<Product> Product { get; set; }
     }
 }

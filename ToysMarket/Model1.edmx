@@ -4,7 +4,15 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="Хранилище ToysMarketModel" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="Хранилище ToysMarketModel" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Buyer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="FIO" Type="nvarchar" MaxLength="50" />
+          <Property Name="Phone" Type="nvarchar" MaxLength="12" />
+        </EntityType>
         <EntityType Name="DeliverMethod">
           <Key>
             <PropertyRef Name="Id" />
@@ -18,14 +26,20 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Count" Type="int" Nullable="false" />
-          <Property Name="FullName" Type="nvarchar" MaxLength="50" />
-          <Property Name="Telephone" Type="nvarchar" MaxLength="20" />
+          <Property Name="BuyerId" Type="int" Nullable="false" />
           <Property Name="Address" Type="nvarchar" MaxLength="100" />
           <Property Name="PaymentMethodId" Type="int" Nullable="false" />
           <Property Name="DeliverMethodId" Type="int" Nullable="false" />
           <Property Name="ProductId" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="PaymentMethod">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Producer">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
@@ -39,7 +53,7 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" />
           <Property Name="Description" Type="nvarchar" MaxLength="150" />
-          <Property Name="Producer" Type="nvarchar" MaxLength="50" />
+          <Property Name="ProducerId" Type="int" Nullable="false" />
           <Property Name="Price" Type="decimal" Precision="18" Scale="2" />
           <Property Name="IsActually" Type="bit" />
           <Property Name="Count" Type="int" />
@@ -54,6 +68,18 @@
           <Property Name="version" Type="int" />
           <Property Name="definition" Type="varbinary(max)" />
         </EntityType>
+        <Association Name="FK_Order_Buyer">
+          <End Role="Buyer" Type="Self.Buyer" Multiplicity="1" />
+          <End Role="Order" Type="Self.Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Buyer">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Order">
+              <PropertyRef Name="BuyerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Order_DeliverMethod">
           <End Role="DeliverMethod" Type="Self.DeliverMethod" Multiplicity="1" />
           <End Role="Order" Type="Self.Order" Multiplicity="*" />
@@ -90,12 +116,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Product_Producer">
+          <End Role="Producer" Type="Self.Producer" Multiplicity="1" />
+          <End Role="Product" Type="Self.Product" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Producer">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Product">
+              <PropertyRef Name="ProducerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="Хранилище ToysMarketModelContainer">
+          <EntitySet Name="Buyer" EntityType="Self.Buyer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DeliverMethod" EntityType="Self.DeliverMethod" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Order" EntityType="Self.Order" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PaymentMethod" EntityType="Self.PaymentMethod" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Producer" EntityType="Self.Producer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Product" EntityType="Self.Product" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Order_Buyer" Association="Self.FK_Order_Buyer">
+            <End Role="Buyer" EntitySet="Buyer" />
+            <End Role="Order" EntitySet="Order" />
+          </AssociationSet>
           <AssociationSet Name="FK_Order_DeliverMethod" Association="Self.FK_Order_DeliverMethod">
             <End Role="DeliverMethod" EntitySet="DeliverMethod" />
             <End Role="Order" EntitySet="Order" />
@@ -108,19 +152,60 @@
             <End Role="Product" EntitySet="Product" />
             <End Role="Order" EntitySet="Order" />
           </AssociationSet>
+          <AssociationSet Name="FK_Product_Producer" Association="Self.FK_Product_Producer">
+            <End Role="Producer" EntitySet="Producer" />
+            <End Role="Product" EntitySet="Product" />
+          </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="ToysMarketModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="ToysMarketEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Buyer" EntityType="ToysMarketModel.Buyer" />
+          <EntitySet Name="DeliverMethod" EntityType="ToysMarketModel.DeliverMethod" />
+          <EntitySet Name="Order" EntityType="ToysMarketModel.Order" />
+          <EntitySet Name="PaymentMethod" EntityType="ToysMarketModel.PaymentMethod" />
+          <EntitySet Name="Producer" EntityType="ToysMarketModel.Producer" />
+          <EntitySet Name="Product" EntityType="ToysMarketModel.Product" />
+          <EntitySet Name="sysdiagrams" EntityType="ToysMarketModel.sysdiagrams" />
+          <AssociationSet Name="FK_Order_Buyer" Association="ToysMarketModel.FK_Order_Buyer">
+            <End Role="Buyer" EntitySet="Buyer" />
+            <End Role="Order" EntitySet="Order" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Order_DeliverMethod" Association="ToysMarketModel.FK_Order_DeliverMethod">
+            <End Role="DeliverMethod" EntitySet="DeliverMethod" />
+            <End Role="Order" EntitySet="Order" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Order_PaymentMethod" Association="ToysMarketModel.FK_Order_PaymentMethod">
+            <End Role="PaymentMethod" EntitySet="PaymentMethod" />
+            <End Role="Order" EntitySet="Order" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Order_Product" Association="ToysMarketModel.FK_Order_Product">
+            <End Role="Product" EntitySet="Product" />
+            <End Role="Order" EntitySet="Order" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Product_Producer" Association="ToysMarketModel.FK_Product_Producer">
+            <End Role="Producer" EntitySet="Producer" />
+            <End Role="Product" EntitySet="Product" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Buyer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="FIO" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Phone" Type="String" MaxLength="12" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Order" Relationship="ToysMarketModel.FK_Order_Buyer" FromRole="Buyer" ToRole="Order" />
+        </EntityType>
         <EntityType Name="DeliverMethod">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" />
           <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Order" Relationship="Self.FK_Order_DeliverMethod" FromRole="DeliverMethod" ToRole="Order" />
+          <NavigationProperty Name="Order" Relationship="ToysMarketModel.FK_Order_DeliverMethod" FromRole="DeliverMethod" ToRole="Order" />
         </EntityType>
         <EntityType Name="Order">
           <Key>
@@ -128,15 +213,15 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Count" Type="Int32" Nullable="false" />
-          <Property Name="FullName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Telephone" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="BuyerId" Type="Int32" Nullable="false" />
           <Property Name="Address" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="PaymentMethodId" Type="Int32" Nullable="false" />
           <Property Name="DeliverMethodId" Type="Int32" Nullable="false" />
           <Property Name="ProductId" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="DeliverMethod" Relationship="Self.FK_Order_DeliverMethod" FromRole="Order" ToRole="DeliverMethod" />
-          <NavigationProperty Name="PaymentMethod" Relationship="Self.FK_Order_PaymentMethod" FromRole="Order" ToRole="PaymentMethod" />
-          <NavigationProperty Name="Product" Relationship="Self.FK_Order_Product" FromRole="Order" ToRole="Product" />
+          <NavigationProperty Name="Buyer" Relationship="ToysMarketModel.FK_Order_Buyer" FromRole="Order" ToRole="Buyer" />
+          <NavigationProperty Name="DeliverMethod" Relationship="ToysMarketModel.FK_Order_DeliverMethod" FromRole="Order" ToRole="DeliverMethod" />
+          <NavigationProperty Name="PaymentMethod" Relationship="ToysMarketModel.FK_Order_PaymentMethod" FromRole="Order" ToRole="PaymentMethod" />
+          <NavigationProperty Name="Product" Relationship="ToysMarketModel.FK_Order_Product" FromRole="Order" ToRole="Product" />
         </EntityType>
         <EntityType Name="PaymentMethod">
           <Key>
@@ -144,7 +229,15 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" />
           <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Order" Relationship="Self.FK_Order_PaymentMethod" FromRole="PaymentMethod" ToRole="Order" />
+          <NavigationProperty Name="Order" Relationship="ToysMarketModel.FK_Order_PaymentMethod" FromRole="PaymentMethod" ToRole="Order" />
+        </EntityType>
+        <EntityType Name="Producer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Product" Relationship="ToysMarketModel.FK_Product_Producer" FromRole="Producer" ToRole="Product" />
         </EntityType>
         <EntityType Name="Product">
           <Key>
@@ -153,25 +246,38 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Description" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
-          <Property Name="Producer" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ProducerId" Type="Int32" Nullable="false" />
           <Property Name="Price" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="IsActually" Type="Boolean" />
           <Property Name="Count" Type="Int32" />
-          <NavigationProperty Name="Order" Relationship="Self.FK_Order_Product" FromRole="Product" ToRole="Order" />
+          <NavigationProperty Name="Order" Relationship="ToysMarketModel.FK_Order_Product" FromRole="Product" ToRole="Order" />
+          <NavigationProperty Name="Producer" Relationship="ToysMarketModel.FK_Product_Producer" FromRole="Product" ToRole="Producer" />
         </EntityType>
         <EntityType Name="sysdiagrams">
           <Key>
             <PropertyRef Name="diagram_id" />
           </Key>
-          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="principal_id" Type="Int32" Nullable="false" />
           <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="version" Type="Int32" />
           <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
         </EntityType>
+        <Association Name="FK_Order_Buyer">
+          <End Type="ToysMarketModel.Buyer" Role="Buyer" Multiplicity="1" />
+          <End Type="ToysMarketModel.Order" Role="Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Buyer">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Order">
+              <PropertyRef Name="BuyerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Order_DeliverMethod">
-          <End Role="DeliverMethod" Type="Self.DeliverMethod" Multiplicity="1" />
-          <End Role="Order" Type="Self.Order" Multiplicity="*" />
+          <End Type="ToysMarketModel.DeliverMethod" Role="DeliverMethod" Multiplicity="1" />
+          <End Type="ToysMarketModel.Order" Role="Order" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="DeliverMethod">
               <PropertyRef Name="Id" />
@@ -182,8 +288,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Order_PaymentMethod">
-          <End Role="PaymentMethod" Type="Self.PaymentMethod" Multiplicity="1" />
-          <End Role="Order" Type="Self.Order" Multiplicity="*" />
+          <End Type="ToysMarketModel.PaymentMethod" Role="PaymentMethod" Multiplicity="1" />
+          <End Type="ToysMarketModel.Order" Role="Order" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="PaymentMethod">
               <PropertyRef Name="Id" />
@@ -194,8 +300,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Order_Product">
-          <End Role="Product" Type="Self.Product" Multiplicity="1" />
-          <End Role="Order" Type="Self.Order" Multiplicity="*" />
+          <End Type="ToysMarketModel.Product" Role="Product" Multiplicity="1" />
+          <End Type="ToysMarketModel.Order" Role="Order" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Product">
               <PropertyRef Name="Id" />
@@ -205,82 +311,91 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="ToysMarketEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="DeliverMethod" EntityType="Self.DeliverMethod" />
-          <EntitySet Name="Order" EntityType="Self.Order" />
-          <EntitySet Name="PaymentMethod" EntityType="Self.PaymentMethod" />
-          <EntitySet Name="Product" EntityType="Self.Product" />
-          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
-          <AssociationSet Name="FK_Order_DeliverMethod" Association="Self.FK_Order_DeliverMethod">
-            <End Role="DeliverMethod" EntitySet="DeliverMethod" />
-            <End Role="Order" EntitySet="Order" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Order_PaymentMethod" Association="Self.FK_Order_PaymentMethod">
-            <End Role="PaymentMethod" EntitySet="PaymentMethod" />
-            <End Role="Order" EntitySet="Order" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Order_Product" Association="Self.FK_Order_Product">
-            <End Role="Product" EntitySet="Product" />
-            <End Role="Order" EntitySet="Order" />
-          </AssociationSet>
-        </EntityContainer>
-      </Schema>
+        <Association Name="FK_Product_Producer">
+          <End Type="ToysMarketModel.Producer" Role="Producer" Multiplicity="1" />
+          <End Type="ToysMarketModel.Product" Role="Product" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Producer">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Product">
+              <PropertyRef Name="ProducerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="Хранилище ToysMarketModelContainer" CdmEntityContainer="ToysMarketEntities">
+          <EntitySetMapping Name="Buyer">
+            <EntityTypeMapping TypeName="ToysMarketModel.Buyer">
+              <MappingFragment StoreEntitySet="Buyer">
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="FIO" ColumnName="FIO" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="DeliverMethod">
             <EntityTypeMapping TypeName="ToysMarketModel.DeliverMethod">
               <MappingFragment StoreEntitySet="DeliverMethod">
-                <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Order">
             <EntityTypeMapping TypeName="ToysMarketModel.Order">
               <MappingFragment StoreEntitySet="Order">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Count" ColumnName="Count" />
-                <ScalarProperty Name="FullName" ColumnName="FullName" />
-                <ScalarProperty Name="Telephone" ColumnName="Telephone" />
-                <ScalarProperty Name="Address" ColumnName="Address" />
-                <ScalarProperty Name="PaymentMethodId" ColumnName="PaymentMethodId" />
-                <ScalarProperty Name="DeliverMethodId" ColumnName="DeliverMethodId" />
                 <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+                <ScalarProperty Name="DeliverMethodId" ColumnName="DeliverMethodId" />
+                <ScalarProperty Name="PaymentMethodId" ColumnName="PaymentMethodId" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="BuyerId" ColumnName="BuyerId" />
+                <ScalarProperty Name="Count" ColumnName="Count" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="PaymentMethod">
             <EntityTypeMapping TypeName="ToysMarketModel.PaymentMethod">
               <MappingFragment StoreEntitySet="PaymentMethod">
-                <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Producer">
+            <EntityTypeMapping TypeName="ToysMarketModel.Producer">
+              <MappingFragment StoreEntitySet="Producer">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Product">
             <EntityTypeMapping TypeName="ToysMarketModel.Product">
               <MappingFragment StoreEntitySet="Product">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="Producer" ColumnName="Producer" />
-                <ScalarProperty Name="Price" ColumnName="Price" />
-                <ScalarProperty Name="IsActually" ColumnName="IsActually" />
                 <ScalarProperty Name="Count" ColumnName="Count" />
+                <ScalarProperty Name="IsActually" ColumnName="IsActually" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="ProducerId" ColumnName="ProducerId" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="sysdiagrams">
             <EntityTypeMapping TypeName="ToysMarketModel.sysdiagrams">
               <MappingFragment StoreEntitySet="sysdiagrams">
-                <ScalarProperty Name="name" ColumnName="name" />
-                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
-                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
-                <ScalarProperty Name="version" ColumnName="version" />
                 <ScalarProperty Name="definition" ColumnName="definition" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

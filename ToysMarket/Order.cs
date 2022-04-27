@@ -16,13 +16,13 @@ namespace ToysMarket
     {
         public int Id { get; set; }
         public int Count { get; set; }
-        public string FullName { get; set; }
-        public string Telephone { get; set; }
+        public int BuyerId { get; set; }
         public string Address { get; set; }
         public int PaymentMethodId { get; set; }
         public int DeliverMethodId { get; set; }
         public int ProductId { get; set; }
     
+        public virtual Buyer Buyer { get; set; }
         public virtual DeliverMethod DeliverMethod { get; set; }
         public virtual PaymentMethod PaymentMethod { get; set; }
         public virtual Product Product { get; set; }

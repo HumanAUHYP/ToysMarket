@@ -7,6 +7,36 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="9*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Grid.Row="0">
+            <TextBox x:Name="tbSearch" Width="300" HorizontalAlignment="Left" TextChanged="tbSearch_TextChanged" Margin="5"/>
+
+            <ComboBox x:Name="cbProducer" Width="200" Margin="5" ItemsSource="{Binding Producers}" SelectedIndex="0" SelectionChanged="cbProducer_SelectionChanged">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <Button x:Name="btnBuy" Content="Buy" FontSize="22" Click="btnBuy_Click" Margin="5"/>
+            <Button x:Name="btnSort" Content="/\" FontSize="24" Click="btnSort_Click" Padding="5,0" Margin="5"/>
+        </StackPanel>
+
+        <DataGrid x:Name="dgProducts" AutoGenerateColumns="False" ItemsSource="{Binding ProductsForSearch}" Grid.Row="1" IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Наименование" Binding="{Binding Name}" Width="1*" />
+                <DataGridTextColumn Header="Описание" Binding="{Binding Description}" Width="1*"  />
+                <DataGridTextColumn Header="Производитель" Binding="{Binding Producer.Name}" Width="1*"  />
+                <DataGridTextColumn Header="Цена" Binding="{Binding Price}" Width="1*"  />
+                <DataGridTextColumn Header="Активность" Binding="{Binding Active}" Width="1*"  />
+                <DataGridTextColumn Header="Количество" Binding="{Binding Count}" Width="1*"  />
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </Window>

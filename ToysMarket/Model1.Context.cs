@@ -25,9 +25,11 @@ namespace ToysMarket
             throw new UnintentionalCodeFirstException();
         }
     
+        public virtual DbSet<Buyer> Buyer { get; set; }
         public virtual DbSet<DeliverMethod> DeliverMethod { get; set; }
         public virtual DbSet<Order> Order { get; set; }
         public virtual DbSet<PaymentMethod> PaymentMethod { get; set; }
+        public virtual DbSet<Producer> Producer { get; set; }
         public virtual DbSet<Product> Product { get; set; }
         public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
     }

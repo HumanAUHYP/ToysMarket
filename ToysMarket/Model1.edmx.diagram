@@ -4,15 +4,19 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="44e770c4bda3449e9e7b8adb327a91cb" Name="Diagram1">
-        <EntityTypeShape EntityType="ToysMarketModel.DeliverMethod" Width="1.5" PointX="0.75" PointY="1.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="ToysMarketModel.Order" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
-        <EntityTypeShape EntityType="ToysMarketModel.PaymentMethod" Width="1.5" PointX="0.75" PointY="4.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="ToysMarketModel.Product" Width="1.5" PointX="0.75" PointY="7.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="ToysMarketModel.sysdiagrams" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
-        <AssociationConnector Association="ToysMarketModel.FK_Order_DeliverMethod" ManuallyRouted="false" />
-        <AssociationConnector Association="ToysMarketModel.FK_Order_PaymentMethod" ManuallyRouted="false" />
-        <AssociationConnector Association="ToysMarketModel.FK_Order_Product" ManuallyRouted="false" />
+      <Diagram DiagramId="44e770c4bda3449e9e7b8adb327a91cb" Name="Diagram1" ZoomLevel="55">
+        <EntityTypeShape EntityType="ToysMarketModel.Buyer" Width="1.5" PointX="3" PointY="7.25" />
+        <EntityTypeShape EntityType="ToysMarketModel.DeliverMethod" Width="1.5" PointX="3" PointY="4.875" />
+        <EntityTypeShape EntityType="ToysMarketModel.Order" Width="1.5" PointX="5.25" PointY="1" />
+        <EntityTypeShape EntityType="ToysMarketModel.PaymentMethod" Width="1.5" PointX="3" PointY="9.75" />
+        <EntityTypeShape EntityType="ToysMarketModel.Producer" Width="1.5" PointX="0.75" PointY="1.75" />
+        <EntityTypeShape EntityType="ToysMarketModel.Product" Width="1.5" PointX="3" PointY="1.125" />
+        <EntityTypeShape EntityType="ToysMarketModel.sysdiagrams" Width="1.5" PointX="5.75" PointY="5.75" />
+        <AssociationConnector Association="ToysMarketModel.FK_Order_Buyer" />
+        <AssociationConnector Association="ToysMarketModel.FK_Order_DeliverMethod" />
+        <AssociationConnector Association="ToysMarketModel.FK_Order_PaymentMethod" />
+        <AssociationConnector Association="ToysMarketModel.FK_Order_Product" />
+        <AssociationConnector Association="ToysMarketModel.FK_Product_Producer" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
